@@ -19,6 +19,7 @@ def get_prompt_tuning_config(model_name, num_tokens=NUM_TOKENS):
 
     return conf
 
+# NOTE: This might also be an unused method
 def preprocess_generate_function(examples, tokenizer, text_column, label_column, task_prompt, one_word_instruction=False):
     instruction = "Please answer with one word only. " if one_word_instruction else ""
     inputs = [f"{instruction}{task_prompt}\n\n{text_column} : {x.strip()}\n\nAnswer: " for x in examples[text_column]]
@@ -31,6 +32,7 @@ def preprocess_generate_function(examples, tokenizer, text_column, label_column,
     model_inputs["labels"] = tokenizer(targets, padding=True)
     model_inputs["labels"] = torch.tensor(model_inputs["labels"]["input_ids"])
     return model_inputs
+
 
 def preprocess_function(examples, tokenizer, text_column, label_column, dataset, eval_split, max_length=MAX_LENGTH):
     batch_size = len(examples[text_column])
@@ -143,7 +145,7 @@ def split_data(dataset, tokenizer, text_column, label_column, eval_split=EVAL_SP
 
     return train_dataloader, eval_dataloader
 
-
+# NOTE: This might be just an unused method. If so, we can clean this up to reduce Code Convolution ...
 def dataset_for_generation_eval(dataset, tokenizer, text_column, label_column, task_prompt, 
                                 eval_split=EVAL_SPLIT, batch_size=BATCH_SIZE, one_word_instruction=False):
     eval_dataset = dataset[eval_split].map(
