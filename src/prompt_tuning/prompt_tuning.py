@@ -123,7 +123,7 @@ def split_data(dataset, tokenizer, text_column, label_column, eval_split=EVAL_SP
         num_proc=1,
         remove_columns=dataset["train"].column_names,
         load_from_cache_file=False,
-        desc="Running tokenizer on dataset",
+        desc="Running tokenizer on train dataset",
     )
 
     eval_dataset = dataset[eval_split].map(
@@ -132,7 +132,7 @@ def split_data(dataset, tokenizer, text_column, label_column, eval_split=EVAL_SP
         num_proc=1,
         remove_columns=dataset["train"].column_names,
         load_from_cache_file=False,
-        desc="Running tokenizer on dataset",
+        desc="Running tokenizer on eval dataset",
     )
 
     # create data loader for train and evaluate

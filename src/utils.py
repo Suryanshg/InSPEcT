@@ -6,8 +6,12 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 def get_model(model_path, to_device=False):
     if model_path == "meta-llama/Meta-Llama-3-8B-Instruct":
+        # model = AutoModelForCausalLM.from_pretrained(
+        #     model_path, device_map="auto", torch_dtype=torch.bfloat16, use_safetensors=True)
+        
         model = AutoModelForCausalLM.from_pretrained(
-            model_path, device_map="auto", torch_dtype=torch.bfloat16, use_safetensors=True)
+            model_path, dtype=torch.bfloat16)
+
         if to_device:
             model.to(DEVICE)
         
