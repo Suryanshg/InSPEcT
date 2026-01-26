@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Prompt Tuning
 # -----------------------------
-python -u -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/sst2 -t text -l label_text -lr 8e-4 -es validation
+python -u -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/sst2 -t text -l label_text -lr 8e-4 -es validation -o trained_prompts

@@ -8,7 +8,7 @@ This is the official code for [Eliciting Textual Descriptions from Representatio
 ### Prompt Tuning
 To Run Prompt Tuning on SST2 Dataset with Meta-Llama-3-8B-Instruct use the following command:
 ```
-python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/sst2 -t text -l label_text -lr 8e-4 -es validation
+python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/sst2 -t text -l label_text -lr 8e-4 -es validation -o trained_prompts
 ```
 
 

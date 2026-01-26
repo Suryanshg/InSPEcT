@@ -232,7 +232,7 @@ def eval(model, eval_dataloader, num_tokens):
     
     return eval_loss, eval_correct
 
-
+# NOTE: Unused Code
 def eval_text_generation(model, eval_dataloader, tokenizer, max_length=50):
     model.eval()
     eval_correct = 0
@@ -273,6 +273,6 @@ def save_checkpoint_params(model, epoch, accuracy, saved_model_name, output_path
             sys.stderr.write(f"could not save checkpoints to {checkpoint_dir}, with error: {e}")
             return
 
-    checkpoint_path = f'{checkpoint_dir}/epoch_{epoch:04d}_acc_{accuracy}.pt'
+    checkpoint_path = f'{checkpoint_dir}/epoch_{epoch:04d}_acc_{accuracy:4f}.pt'
     trainable_params = [p for p in model.parameters() if p.requires_grad][0]
     torch.save(trainable_params, checkpoint_path)
