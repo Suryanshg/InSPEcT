@@ -12,12 +12,13 @@ from tqdm import tqdm
 def get_prompt_tuning_config(model_name, num_tokens=NUM_TOKENS):
     conf = PromptTuningConfig(
         task_type=TaskType.CAUSAL_LM,
-        prompt_tuning_init=PromptTuningInit.RANDOM, # How to initialize the prompt tuning parameters.
+        prompt_tuning_init=PromptTuningInit.RANDOM, # Random Weight Init for Prompt Tuning Params
         num_virtual_tokens=num_tokens,
         tokenizer_name_or_path=model_name           # tokenizer to use
     )
 
     return conf
+
 
 # NOTE: This might also be an unused method
 def preprocess_generate_function(examples, tokenizer, text_column, label_column, task_prompt, one_word_instruction=False):
@@ -212,25 +213,31 @@ def train(model, train_dataloader, eval_dataloader, num_tokens, saved_model_name
 
     return model
 
-
+# Performs Evalutation Based on Exact Token Match
 def eval(model, eval_dataloader, num_tokens):
-    model.eval()
+    model.eval()                          # Set model to evaluation mode
     eval_loss = 0
     eval_correct = 0
     for batch in tqdm(eval_dataloader):
-        batch = {k: v.to(DEVICE) for k, v in batch.items()}
-        with torch.no_grad():
-            outputs = model(**batch)
-        loss = outputs.loss
+        batch = {k: v.to(DEVICE) for k, v in batch.items()}  # Move batch to GPU
+        with torch.no_grad():             # Disable gradient computation
+            outputs = model(**batch)      # Forward pass with input_ids, attention_mask, labels
+        loss = outputs.loss               # Get cross-entropy loss
         eval_loss += loss.detach().float()
-        top_tokens = torch.argmax(outputs.logits, dim=-1)[:,num_tokens-1:-1]
+        
+        # Get the most likely token at each position
+        top_tokens = torch.argmax(outputs.logits, dim=-1)[:, num_tokens-1:-1]
+        # [:,num_tokens-1:-1] skips the soft prompt tokens and last token
+        
+        # Check if prediction matches label (ignoring -100 padding positions)
         is_prediction_correct = (
-            (batch['labels'] == -100) |
-            (batch['labels'] == top_tokens)
-        ).all(dim=1)
+            (batch['labels'] == -100) |   # Ignore padding tokens (always "correct")
+            (batch['labels'] == top_tokens)  # Or actual match
+        ).all(dim=1)                      # All tokens in sequence must match
         eval_correct += sum(is_prediction_correct)
     
     return eval_loss, eval_correct
+
 
 # NOTE: Unused Code
 def eval_text_generation(model, eval_dataloader, tokenizer, max_length=50):
