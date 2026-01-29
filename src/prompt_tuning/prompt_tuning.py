@@ -96,6 +96,8 @@ def load_dataset_with_name(dataset_name, create_text_labels, eval_split, max_tra
             label_column = "Label"
         elif dataset_name == "SetFit/sst5":
             classes = ["terrible", "bad", "neutral", "good", "great"]
+        elif dataset_name == "stanfordnlp/sst2":
+            classes = ["negative", "positive"]
         else:
             classes = [k.replace("_", " ") for k in dataset["train"].features["label"].names]
         
