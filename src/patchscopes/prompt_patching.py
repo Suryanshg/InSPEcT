@@ -33,7 +33,7 @@ def set_soft_prompt_patch_hook(model, soft_prompt, source_position, num_of_token
             # (batch, sequence, hidden_state)
             if model.config.model_type == "llama":
                 # output[0][0, source_position : source_position + num_of_tokens] = soft_prompt     #NOTE: A Bug Maybe, as it is straightforwardly incompatible...
-                output[0][source_position : source_position + num_of_tokens]
+                output[0][source_position : source_position + num_of_tokens] = soft_prompt
             
             else:
                 raise ValueError(f"Unknown model: {model.config.model_type}")
@@ -107,16 +107,25 @@ def generate_greedy_deterministic(hs_patch_config, inp, max_length, end_token, m
     # Copy target prompt's input token ids for generation (IDK why again)
     input_ids = inp["input_ids"].detach().clone().to(DEVICE)
 
+    # TODO: Try this to see if it works
+    model.set_attn_implementation('eager')
+
     with torch.no_grad():
         for _ in range(max_length):
             patch_hooks = set_hs_patch_hooks(model, hs_patch_config, num_of_tokens) 
             outputs = model(input_ids, output_attentions=True, output_hidden_states=True)
             remove_hooks(patch_hooks)
             
+            # Extract logits for the last token
             logits = outputs.logits[:, -1, :]
+
+            # Get the next token id using the logits
             next_token_id = torch.argmax(logits, dim=-1)
+
+            # Concat the next token id to the input_ids for autoregressive generation
             input_ids = torch.cat([input_ids, next_token_id.unsqueeze(0)], dim=-1)
 
+            # If the end_token is predicted, break out of the autoregression loop
             if next_token_id.item() == end_token:
                 break
 
@@ -150,7 +159,11 @@ def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, nu
     target_position = target_inp["input_ids"].shape[1] - num_tokens # Can add -1 for the ":" in the end
 
     # Set the stopping token for generation (defaults to comma)
-    end_token = end_token or tokenizer.encode(',')[0]
+    # NOTE: Bug: This is actually getting the BOS token as of now
+    # end_token = end_token or tokenizer.encode(',')[0]
+
+    # TODO: Try this
+    end_token = end_token or tokenizer.encode(',', add_special_tokens=False)[0]
 
     # run model on the same prompt
 
@@ -159,9 +172,11 @@ def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, nu
     for _k, _v in target_inp.items():
         target_inp_copy[_k] = _v.detach().clone().to(DEVICE)
 
-    # Create a config to specify that at target layer
-    # patch position target_position with hidden states from source layer + 1
-    # (+1 since layer 0's output = layer 1's input)
+    # Create hs_patch_config
+    # hs_cache[i] stores hidden_states[i] which is:
+    #   - i=0: embedding output (before any transformer layer)
+    #   - i=1 to 32: output of layer (i-1)
+    # So to get output of source_layer, we access hs_cache[source_layer + 1]
     hs_patch_config = {
         target_layer: [
             (target_position, hs_cache[source_layer + 1][0])

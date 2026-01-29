@@ -94,9 +94,12 @@ def run_patching_and_save(model_path, target_prompt_name, soft_prompt_path, num_
     soft_prompt = torch.load(soft_prompt_path)
     soft_prompt = soft_prompt.to(DEVICE) 
 
-    # TODO:?
-    end_token = tokenizer.encode('$')[0]
-    
+    # NOTE: Bug: This is actually getting the BOS token as of now
+    # end_token = tokenizer.encode('$')[0]
+
+    # TODO: Try this
+    end_token = tokenizer.encode('$', add_special_tokens=False)[0]
+
     # Prepare a path to store patching experiment output
     # This will be a CSV file
     output_path = get_output_file_path(

@@ -10,7 +10,8 @@ def calculate_scores(input_path, subdir_df, task):
     accuracy = float(input_path.split('_')[-1][:-4])
     df = pd.read_csv(input_path)
 
-    df['output'].fillna('', inplace=True)
+    # df['output'].fillna('', inplace=True)
+    df['output'] = df['output'].fillna('')
     df['output'] = df['output'].str.strip()
     df['output'] = df['output'].astype(str)
     df['cut_output'] = df['output'].apply(PatchingScore.cut_string_at_first_occurrence)
@@ -28,14 +29,16 @@ def calculate_scores(input_path, subdir_df, task):
     best_rouge1_output = df.loc[df['rouge1_no_stop'] == df['rouge1_no_stop'].max(), 'cut_output'].iloc[0]
     best_class_rate_output = df.loc[df['class_rate'] == df['class_rate'].max(), 'cut_output'].iloc[0]
 
-    subdir_df = subdir_df._append({
+    new_row = pd.DataFrame([{
         'epoch': epoch,
         'accuracy': accuracy,
         'max_rouge1': df['rouge1_no_stop'].max(),
         'max_class_rate': df['class_rate'].max(),
         'best_rouge1_output': best_rouge1_output,
-        'best_class_rate_output' : best_class_rate_output
-    }, ignore_index=True)
+        'best_class_rate_output': best_class_rate_output
+    }])
+
+    subdir_df = pd.concat([subdir_df, new_row], ignore_index=True)
 
     return df, subdir_df
 

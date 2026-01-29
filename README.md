@@ -16,6 +16,11 @@ To Run Patchscopes on trained soft prompts using `Meta-Llama-3-8B-Instruct` and 
 python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/sst2 -n 7 -c trained_prompts/Meta-Llama-3-8B-Instruct_sst2_lr0.0008_8_epochs_pt_n7 -t description_and_classes -i 1
 ```
 
+### Calculate Scores on the elicited descriptions of the Soft Prompts
+```
+python -m scripts.calculate_scores -i patching_output/Meta-Llama-3-8B-Instruct/SetFit/sst2/n7_target_description_and_classes_1 -o scores -t sst2
+```
+
 
 
 
