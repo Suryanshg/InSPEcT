@@ -31,8 +31,8 @@ def calculate_scores(input_path, subdir_df, task):
 
     new_row = pd.DataFrame([{
         'epoch': epoch,
-        'accuracy': accuracy,
-        'max_rouge1': df['rouge1_no_stop'].max(),
+        'accuracy': round(accuracy, 2),
+        'max_rouge1': round(df['rouge1_no_stop'].max(), 2),
         'max_class_rate': df['class_rate'].max(),
         'best_rouge1_output': best_rouge1_output,
         'best_class_rate_output': best_class_rate_output

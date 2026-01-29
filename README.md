@@ -18,7 +18,7 @@ python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct
 
 ### Calculate Scores on the elicited descriptions of the Soft Prompts
 ```
-python -m scripts.calculate_scores -i patching_output/Meta-Llama-3-8B-Instruct/SetFit/sst2/n7_target_description_and_classes_1 -o scores -t sst2
+python -m scripts.calculate_scores -i patching_output/Meta-Llama-3-8B-Instruct/SetFit/sst2/n7_target_description_and_classes_1 -o scores/Meta-Llama-3-8B-Instruct_sst2_lr0.0008_8_epochs_pt_n7 -t sst2
 ```
 
 
