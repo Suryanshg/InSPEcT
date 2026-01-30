@@ -2,12 +2,13 @@ all_small_layers = \
     [{"min_source": 2, "max_source": 30, "min_target":2, "max_target": 30}]
 
 llama_best_scored_layers = [
-    {"min_source": 2, "max_source": 26, "min_target":2, "max_target": 6},
-    {"min_source": 2, "max_source": 30, "min_target":7, "max_target": 11},
-    {"min_source": 2, "max_source": 30, "min_target":12, "max_target": 16},
-    {"min_source": 7, "max_source": 26, "min_target":17, "max_target": 21},
-    {"min_source": 17, "max_source": 26, "min_target":22, "max_target": 26},
-    {"min_source": 22, "max_source": 30, "min_target":27, "max_target": 30},
+    {"min_source": 1, "max_source": 1, "min_target": 1, "max_target": 1},
+    {"min_source": 2, "max_source": 26, "min_target": 2, "max_target": 6},
+    {"min_source": 2, "max_source": 30, "min_target": 7, "max_target": 11},
+    {"min_source": 2, "max_source": 30, "min_target": 12, "max_target": 16},
+    {"min_source": 7, "max_source": 26, "min_target": 17, "max_target": 21},
+    {"min_source": 17, "max_source": 26, "min_target": 22, "max_target": 26},
+    {"min_source": 22, "max_source": 30, "min_target": 27, "max_target": 30},
 ]
 
 
