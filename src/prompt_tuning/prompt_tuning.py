@@ -211,7 +211,7 @@ def train(model, train_dataloader, eval_dataloader, num_tokens, saved_model_name
         eval_ppl = torch.exp(eval_epoch_loss)
         train_epoch_loss = total_loss / len(train_dataloader)
         train_ppl = torch.exp(train_epoch_loss)
-        print(f"{epoch=}: {train_ppl=} {train_epoch_loss=} {eval_ppl=} {eval_epoch_loss=} {eval_accuracy=:.4f}")
+        print(f"epoch={epoch + 1}: {train_ppl=} {train_epoch_loss=} {eval_ppl=} {eval_epoch_loss=} {eval_accuracy=:.4f}")
 
     return model
 
@@ -282,6 +282,6 @@ def save_checkpoint_params(model, epoch, accuracy, saved_model_name, output_path
             sys.stderr.write(f"could not save checkpoints to {checkpoint_dir}, with error: {e}")
             return
 
-    checkpoint_path = f'{checkpoint_dir}/epoch_{epoch:04d}_acc_{accuracy:4f}.pt'
+    checkpoint_path = f'{checkpoint_dir}/epoch_{epoch:04d}_acc_{accuracy:2f}.pt'
     trainable_params = [p for p in model.parameters() if p.requires_grad][0]
     torch.save(trainable_params, checkpoint_path)

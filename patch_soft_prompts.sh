@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Prompt Tuning
 # -----------------------------
-python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/sst2 -n 7 -c trained_prompts/Meta-Llama-3-8B-Instruct_sst2_lr0.0008_8_epochs_pt_n7 -t description_and_classes -i 1
+python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -n 7 -c trained_prompts/Meta-Llama-3-8B-Instruct_sst2_lr0.0008_8_epochs_pt_n7 -t description_and_classes -i 1
