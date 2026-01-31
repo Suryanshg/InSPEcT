@@ -1,9 +1,16 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import argparse
+
+
+# Parse CLI Arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-f', '--file', type=str, help='Path of the CSV file', required=True)
+args = parser.parse_args()
 
 # Load the CSV file
-csv_path = "scores/Meta-Llama-3-8B-Instruct/stanfordnlp/sst2/n7_target_description_and_classes_1/epoch_0008_acc_0.897936.csv"
-df = pd.read_csv(csv_path)
+# csv_path = "scores/Meta-Llama-3-8B-Instruct/stanfordnlp/sst2/n28_target_description_and_classes_1/epoch_0007_acc_0.934633.csv"
+df = pd.read_csv(args.file)
 
 # Filter out rows where rouge1 AND class_rate is > 0
 df_filtered = df[(df['rouge1'] > 0) & (df['class_rate'] > 0)]
