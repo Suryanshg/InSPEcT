@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Prompt Tuning
 # -----------------------------
-python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -t sentence -l label -lr 8e-4 -es validation -o trained_prompts -mt 50000 -tl
+python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -t sentence -l label -n 28 -lr 8e-4 -es validation -o trained_prompts -mt 50000 -tl
