@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load the CSV file
-csv_path = "scores/Meta-Llama-3-8B-Instruct_sst2_lr0.0008_8_epochs_pt_n7/epoch_0008_acc_0.7442660331726074.csv"
+csv_path = "scores/Meta-Llama-3-8B-Instruct/stanfordnlp/sst2/n7_target_description_and_classes_1/epoch_0008_acc_0.897936.csv"
 df = pd.read_csv(csv_path)
 
 # Filter out rows where rouge1 AND class_rate is > 0
