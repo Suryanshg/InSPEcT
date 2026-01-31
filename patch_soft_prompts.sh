@@ -4,9 +4,9 @@
 #SBATCH --mem=16g
 #SBATCH -J "Patch Soft Prompts"
 #SBATCH -p short
-#SBATCH -t 4:00:00
+#SBATCH -t 12:00:00
 #SBATCH --gres=gpu:1
-#SBATCH -C H100
+#SBATCH -C A100
 #SBATCH -o logs.out
 #SBATCH -e logs.out
 
@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Patch Scopes Experiment
 # -----------------------------
-python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -n 28 -c trained_prompts/Meta-Llama-3-8B-Instruct_sst2_lr0.0008_8_epochs_pt_n28 -t description_and_classes -i 1
+python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -n 28 -c to_patch -t description_and_classes -i 1 -max 8
