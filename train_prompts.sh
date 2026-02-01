@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Prompt Tuning
 # -----------------------------
-python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d "fancyzhx/ag_news" -t text -l label -n 14 -lr 8e-3 -es test -o trained_prompts -mt 50000 -tl
+python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d "fancyzhx/ag_news" -t text -l label -n 28 -lr 8e-3 -es test -o trained_prompts -mt 50000 -tl

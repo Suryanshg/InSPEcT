@@ -47,5 +47,5 @@ ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right')
 
 plt.title('ROUGE-1 Score (>0) and Class Rate (>0) by Src - Tgt Layer Pairing')
 plt.tight_layout()
-plt.savefig('layer_scores.png', dpi=150, bbox_inches='tight')
+plt.savefig('viz/layer_scores.png', dpi=150, bbox_inches='tight')
 plt.show()
