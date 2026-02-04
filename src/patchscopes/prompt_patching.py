@@ -103,7 +103,19 @@ def build_soft_hs_cache(soft_prompt, model, tokenizer, num_of_tokens):
     return hs_cache, inp
 
 
-def generate_greedy_deterministic(hs_patch_config, inp, max_length, end_token, model, tokenizer, num_of_tokens, target_layer):
+def generate_greedy_deterministic(hs_patch_config, 
+                                  inp, 
+                                  max_length, 
+                                  end_token, 
+                                  model, 
+                                  tokenizer, 
+                                  num_of_tokens, 
+                                  target_layer,
+                                  do_sample = False,
+                                  temperature = 1.0,
+                                  top_p = 0.9,
+                                  top_k = 50):
+    
     # Copy target prompt's input token ids for generation (IDK why again)
     input_ids = inp["input_ids"].detach().clone().to(DEVICE)
 
@@ -120,7 +132,16 @@ def generate_greedy_deterministic(hs_patch_config, inp, max_length, end_token, m
             logits = outputs.logits[:, -1, :]
 
             # Get the next token id using the logits
-            next_token_id = torch.argmax(logits, dim=-1)
+            if do_sample:
+                # Apply temperature scaling
+                logits = logits / temperature
+
+                # Sample from the softmax distribution
+                probs = torch.softmax(logits, dim = -1)
+                next_token_id = torch.multinomial(probs, num_samples=1).squeeze(1)
+
+            else:
+                next_token_id = torch.argmax(logits, dim=-1)
 
             # Concat the next token id to the input_ids for autoregressive generation
             input_ids = torch.cat([input_ids, next_token_id.unsqueeze(0)], dim=-1)
@@ -131,7 +152,7 @@ def generate_greedy_deterministic(hs_patch_config, inp, max_length, end_token, m
 
     generated_text = tokenizer.batch_decode(input_ids, skip_special_tokens=True)
     patched_pattern = (" x" * num_of_tokens).strip()
-    return "".join(generated_text).split(patched_pattern)[-1]
+    return "".join(generated_text).split(patched_pattern)[-1] 
 
 
 def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, num_tokens,
@@ -184,4 +205,13 @@ def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, nu
     }
 
     # Generate text with the patched hidden states
-    return generate_greedy_deterministic(hs_patch_config, target_inp_copy, 60, end_token, model, tokenizer, num_tokens, target_layer)
+    return generate_greedy_deterministic(hs_patch_config, 
+                                         target_inp_copy, 
+                                         60, 
+                                         end_token, 
+                                         model, 
+                                         tokenizer, 
+                                         num_tokens, 
+                                         target_layer,
+                                         do_sample=True)
+
