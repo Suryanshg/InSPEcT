@@ -11,10 +11,18 @@ llama_best_scored_layers = [
     {"min_source": 22, "max_source": 30, "min_target": 27, "max_target": 30},
 ]
 
-all_layers = [
-    {"min_source": 0, "max_source": 30, "min_target": 0, "max_target": 30}
-]
+# all_layers = [
+#     {"min_source": 0, "max_source": 30, "min_target": 0, "max_target": 30}
+# ]
 
+# 0-indexed layers of Llama-3 Model
+# -1 idx is for embed layer
+# 0 idx is for first decoder layer
+# 1 idx is for second decoder layer
+# 31 idx is for last decoder layer
+all_layers = [
+    {"min_source": -1, "max_source": 30, "min_target": -1, "max_target": 30}
+]
 
 def get_layers_combinations_for_model(model_path):
     # TODO: Add Llama-3.1-8B here for experiment's with Mac's paper

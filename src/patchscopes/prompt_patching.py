@@ -14,7 +14,10 @@ def set_hs_patch_hooks(model, hs_patch_config, num_of_tokens):
     hooks = []
     for l in hs_patch_config:
         if model.config.model_type == 'llama':
-            layer = model.model.layers[l]
+            if l == -1:
+                layer = model.model.embed_tokens
+            else:
+                layer = model.model.layers[l]
 
         else:
             raise ValueError(f"Unknown model: {model.config.model_type}")
@@ -44,7 +47,7 @@ def set_soft_prompt_patch_hook(model, soft_prompt, source_position, num_of_token
     if model.config.model_type == "llama":
 
         # Fetch the first layer
-        # first_layer: torch.nn.Module = model.model.layers[0]
+        first_layer: torch.nn.Module = model.model.layers[0]
 
         # Fetch the embedding layer
         embed_layer: torch.nn.Module = model.model.embed_tokens
@@ -115,6 +118,9 @@ def build_soft_hs_cache(soft_prompt, model, tokenizer, num_of_tokens):
         # Store hidden state at the patched position
         hs_cache[layer].append(output["hidden_states"][layer][0][pos:])
 
+    # Save the hs_cache
+    # torch.save(hs_cache, 'hs_cache_first_layer.pt')
+
     # Return the hidden state cache and the tokenized placeholder text
     return hs_cache, inp
 
@@ -136,7 +142,7 @@ def generate_greedy_deterministic(hs_patch_config,
     input_ids = inp["input_ids"].detach().clone().to(DEVICE)
 
     # TODO: Try this to see if it works
-    model.set_attn_implementation('eager')
+    # model.set_attn_implementation('eager')
 
     with torch.no_grad():
         for _ in range(max_length):
@@ -215,7 +221,7 @@ def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, nu
     # Create hs_patch_config
     # hs_cache[i] stores hidden_states[i] which is:
     #   - i=0: embedding output (before any transformer layer)
-    #   - i=1 to 32: output of layer (i-1)
+    #   - i=1 to 32: output of layer i (or i - 1 according to model.model.layers indexing style)
     # So to get output of source_layer, we access hs_cache[source_layer + 1]
     hs_patch_config = {
         target_layer: [
