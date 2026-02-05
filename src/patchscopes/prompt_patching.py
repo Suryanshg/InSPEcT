@@ -44,14 +44,22 @@ def set_soft_prompt_patch_hook(model, soft_prompt, source_position, num_of_token
     if model.config.model_type == "llama":
 
         # Fetch the first layer
-        first_layer: torch.nn.Module = model.model.layers[0]
+        # first_layer: torch.nn.Module = model.model.layers[0]
+
+        # Fetch the embedding layer
+        embed_layer: torch.nn.Module = model.model.embed_tokens
     
     # Raise Error if model is any other than a Llama
     else:
         raise ValueError(f"Unknown model: {model.config.model_type}")
     
-    # Attach the hook to layer 0 (so soft_prompt enters at the start of processing)
-    hooks = [first_layer.register_forward_hook(
+    # Attach the hook to layer 1 (first decoder layer) (so soft_prompt enters at the start of processing)
+    # hooks = [first_layer.register_forward_hook(
+    #     patch_sp("patch_sp_0", soft_prompt)
+    # )]
+
+    # Attach the hook to layer 0 (embed_tokens layer) (so soft_prompt enters at the start of processing)
+    hooks = [embed_layer.register_forward_hook(
         patch_sp("patch_sp_0", soft_prompt)
     )]
 
@@ -76,6 +84,9 @@ def build_soft_hs_cache(soft_prompt, model, tokenizer, num_of_tokens):
 
     # Calculate starting position of the "x" tokens in the sequence.
     pos = inp['input_ids'].shape[1] - num_of_tokens
+
+    # Convert soft_prompt to model's dtype (bfloat16)
+    soft_prompt = soft_prompt.to(model.dtype)
     
     # Inject soft_prompt at layer 0
     patch_hooks = set_soft_prompt_patch_hook(model, soft_prompt, pos, num_of_tokens) 
@@ -86,6 +97,11 @@ def build_soft_hs_cache(soft_prompt, model, tokenizer, num_of_tokens):
 
     # Remove all hooks (call-back methods after each forward call on a layer)
     remove_hooks(patch_hooks)
+
+    # Debug: Check if soft_prompt was injected at embedding layer
+    # print(f"Checking layer 0 (embeddings):")
+    # print(f"Match: {torch.allclose(output['hidden_states'][0][0][pos:], soft_prompt, atol=1e-5)}")
+    # print(f"Max diff: {(output['hidden_states'][0][0][pos:] - soft_prompt).abs().max().item()}")
 
     # For each layer idx in layers to cache
     for layer in layers_to_cache:
@@ -170,6 +186,9 @@ def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, nu
     :param target_layer: Which layer to inject hidden states into
     :param end_token: Stopping token for generation
     """
+    # TODO: Handle case when source prompt or target prompt is 0
+
+
     # Run soft prompt through the model and capture hidden states at every layer
     hs_cache, _ = build_soft_hs_cache(soft_prompt, model, tokenizer, num_tokens)
 

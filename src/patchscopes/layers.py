@@ -11,10 +11,15 @@ llama_best_scored_layers = [
     {"min_source": 22, "max_source": 30, "min_target": 27, "max_target": 30},
 ]
 
+all_layers = [
+    {"min_source": 0, "max_source": 30, "min_target": 0, "max_target": 30}
+]
+
 
 def get_layers_combinations_for_model(model_path):
     # TODO: Add Llama-3.1-8B here for experiment's with Mac's paper
     if model_path in ["meta-llama/Llama-2-7b-chat-hf", "meta-llama/Meta-Llama-3-8B-Instruct"]:
-        return llama_best_scored_layers
+        # return llama_best_scored_layers
+        return all_layers
     
     return all_small_layers

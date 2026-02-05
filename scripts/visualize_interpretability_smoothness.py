@@ -1,12 +1,24 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-csv_path = "scores/Meta-Llama-3-8B-Instruct/fancyzhx/ag_news/n56_target_description_and_classes_1/epoch_0006_acc_0.947000.csv"
-df = pd.read_csv(csv_path)
+# Define the folder containing CSV files
+csv_folder = Path("scores/Meta-Llama-3-8B-Instruct/fancyzhx/ag_news/n56_target_description_and_classes_1")
 
-# Pivot to grid: rows=source_layer, cols=target_layer, values=rouge1 (mean if duplicates)
-grid = df.pivot_table(
+# Read all CSV files and concatenate
+all_dfs = []
+for csv_file in csv_folder.glob("*.csv"):
+    if str(csv_file).__contains__("epoch"):
+        df = pd.read_csv(csv_file)
+        print(f"\n{csv_file.name}: {len(df)} rows, rouge1 range: {df['rouge1'].min():.3f} - {df['rouge1'].max():.3f}")
+        all_dfs.append(df)
+
+# Combine all dataframes
+combined_df = pd.concat(all_dfs, ignore_index=True)
+
+# Pivot to grid
+grid = combined_df.pivot_table(
     index="target_layer",
     columns="source_layer",
     values="rouge1",
@@ -15,7 +27,7 @@ grid = df.pivot_table(
 
 plt.figure(figsize=(10, 8))
 sns.heatmap(grid, cmap="viridis", annot=False)
-plt.title("ROUGE1 Smoothness by Src / Tgt Layer")
+plt.title(f"ROUGE1 Smoothness by Src / Tgt Layer (Mean of {len(all_dfs)} files)")
 plt.xlabel("Src Layer")
 plt.ylabel("Tgt Layer")
 plt.tight_layout()
