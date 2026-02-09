@@ -202,7 +202,10 @@ def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, nu
     target_inp = tokenizer(target_prompt, return_tensors="pt").to(DEVICE)
 
     # Calculate position for patching (at placeholder token (x) positions)
-    target_position = target_inp["input_ids"].shape[1] - num_tokens # Can add -1 for the ":" in the end
+    # target_position = target_inp["input_ids"].shape[1] - num_tokens # Can add -1 for the ":" in the end
+
+    # Use target_position as 1, since first token is BOS
+    target_position = 1
 
     # Set the stopping token for generation (defaults to comma)
     # NOTE: Bug: This is actually getting the BOS token as of now

@@ -40,3 +40,10 @@ def create_few_shot_prompt(num_of_tokens, examples, separator='|'):
     prompt = separator.join(selected_examples) + separator[:-1]  + " x" * num_of_tokens
 
     return prompt
+
+
+def create_cot_prompt(num_of_tokens, separator = '|'):
+    soft_prompt_placeholder =  " x" * num_of_tokens
+    cot_prompt = f"{soft_prompt_placeholder} {separator} First I should classify this as:"
+    return cot_prompt
+

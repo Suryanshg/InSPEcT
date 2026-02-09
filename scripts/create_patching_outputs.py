@@ -2,7 +2,7 @@ import argparse
 import os
 from src.patchscopes.layers import get_layers_combinations_for_model
 from src.patchscopes.patch_layers import run_patching_and_save
-from src.patchscopes.target_prompt import few_shot_demonstrations, create_few_shot_prompt
+from src.patchscopes.target_prompt import few_shot_demonstrations, create_few_shot_prompt, create_cot_prompt
 from src.utils import get_model, get_tokenizer
 
 
@@ -50,7 +50,11 @@ if __name__ == '__main__':
         target_name = target_prompt_type
 
         # Generate target prompts (a single one) using Few Shot examples
-        target_prompts = {f"target_{target_name}_{target_prompt_index}": create_few_shot_prompt(num_tokens, examples) for i in range(1)}
+        # target_prompts = {f"target_{target_name}_{target_prompt_index}": create_few_shot_prompt(num_tokens, examples) for i in range(1)}
+
+        # Generate chain-of-thought styled target prompt
+        target_prompts = {f"target_{target_name}_{target_prompt_index}": create_cot_prompt(num_tokens) for i in range(1)}
+
 
     # Print the Target Prompt to be used for patching
     print("Using following Target Prompt for Patching:")
