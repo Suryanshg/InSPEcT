@@ -215,7 +215,7 @@ def train(model, train_dataloader, eval_dataloader, num_tokens, saved_model_name
 
     return model
 
-# Performs Evalutation Based on Exact Token Match
+# Performs Evaluation Based on Exact Token Match
 def eval(model, eval_dataloader, num_tokens):
     model.eval()                          # Set model to evaluation mode
     eval_loss = 0

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 # Define the folder containing CSV files
-csv_folder = Path("scores/Meta-Llama-3-8B-Instruct/fancyzhx/ag_news/n56_target_description_and_classes_1")
+csv_folder = Path("cot_scores/Meta-Llama-3-8B-Instruct/fancyzhx/ag_news/n56_target_description_and_classes_1")
 
 # Read all CSV files and concatenate
 all_dfs = []

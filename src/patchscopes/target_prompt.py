@@ -42,8 +42,10 @@ def create_few_shot_prompt(num_of_tokens, examples, separator='|'):
     return prompt
 
 
-def create_cot_prompt(num_of_tokens, separator = '|'):
+def create_cot_prompt(num_of_tokens, random_test_example):
+    # CoT Target Prompt should look like: 
+    # <SOFT_PROMPT> + " text: " + <EXAMPLE_TEXT_FROM_TEST_DATASET> + " Label: " + " First I should classify this as:"
     soft_prompt_placeholder =  " x" * num_of_tokens
-    cot_prompt = f"{soft_prompt_placeholder} {separator} First I should classify this as:"
+    cot_prompt = f"{soft_prompt_placeholder} Text: {random_test_example} Label: First I should classify this as one of the following"
     return cot_prompt
 

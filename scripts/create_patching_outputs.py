@@ -4,6 +4,7 @@ from src.patchscopes.layers import get_layers_combinations_for_model
 from src.patchscopes.patch_layers import run_patching_and_save
 from src.patchscopes.target_prompt import few_shot_demonstrations, create_few_shot_prompt, create_cot_prompt
 from src.utils import get_model, get_tokenizer
+from datasets import load_dataset
 
 
 if __name__ == '__main__':
@@ -52,8 +53,13 @@ if __name__ == '__main__':
         # Generate target prompts (a single one) using Few Shot examples
         # target_prompts = {f"target_{target_name}_{target_prompt_index}": create_few_shot_prompt(num_tokens, examples) for i in range(1)}
 
-        # Generate chain-of-thought styled target prompt
-        target_prompts = {f"target_{target_name}_{target_prompt_index}": create_cot_prompt(num_tokens) for i in range(1)}
+
+        # Fetch a random example from the test dataset
+        # TODO: Can add seed to shuffle() later for reproducibility
+        random_test_example = load_dataset(task_dataset, trust_remote_code=True, split='test').shuffle()[0]['text']
+
+        # Generate chain-of-thought styled target prompt using random_test_example
+        target_prompts = {f"target_{target_name}_{target_prompt_index}": create_cot_prompt(num_tokens, random_test_example) for i in range(1)}
 
 
     # Print the Target Prompt to be used for patching
