@@ -82,7 +82,8 @@ class PatchingScore:
 
         # Iterate through the string to find each occurrence of the delimiters
         for i, char in enumerate(text):
-            if char in ['\n', '$', '.', '|']:
+            # if char in ['\n', '$', '.', '|']:
+            if char in ['|', '$']:
                 # Check if the current cut leaves more than 20% of the string
                 if i >= min_length:
                     cut_position = i
