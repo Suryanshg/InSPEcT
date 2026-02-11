@@ -92,3 +92,11 @@ class PatchingScore:
 
         # Return the cut string or the full string if no valid cut was found
         return text[start_position:cut_position] if cut_position < len(text) else text
+    
+
+    @staticmethod
+    def get_cot_output(text: str):
+        # Cut the string after the occurrence of "First I should classify this as one of the following"
+        cot_output = text.split("First I should classify this as one of the following")[-1]
+        return cot_output
+

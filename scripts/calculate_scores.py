@@ -14,7 +14,8 @@ def calculate_scores(input_path, subdir_df, task):
     df['output'] = df['output'].fillna('')
     df['output'] = df['output'].str.strip()
     df['output'] = df['output'].astype(str)
-    df['cut_output'] = df['output'].apply(PatchingScore.cut_string_at_first_occurrence)
+    # df['cut_output'] = df['output'].apply(PatchingScore.cut_string_at_first_occurrence)
+    df['cut_output'] = df['output'].apply(PatchingScore.get_cot_output)
 
     df['rouge1'] = df.apply(lambda row: PatchingScore.calculate_rouge_score(task, row['cut_output'])['rouge1'], axis=1)
     df['rouge2'] = df.apply(lambda row: PatchingScore.calculate_rouge_score(task, row['cut_output'])['rouge2'], axis=1)
