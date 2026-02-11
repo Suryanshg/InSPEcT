@@ -241,5 +241,5 @@ def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, nu
                                          tokenizer, 
                                          num_tokens, 
                                          target_layer,
-                                         do_sample=True)
+                                         do_sample=False)
 
