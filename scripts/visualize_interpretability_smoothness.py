@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 # Define the folder containing CSV files
-csv_folder = Path("cot_scores/Meta-Llama-3-8B-Instruct/fancyzhx/ag_news/n56_target_description_and_classes_1")
+csv_folder = Path("cot_scores/Meta-Llama-3-8B-Instruct/stanfordnlp/sst2/n56_target_description_and_classes_1")
 
 # Read all CSV files and concatenate
 all_dfs = []
@@ -27,7 +27,7 @@ grid = combined_df.pivot_table(
 
 plt.figure(figsize=(10, 8))
 sns.heatmap(grid, cmap="viridis", annot=False)
-plt.title(f"ROUGE1 Smoothness by Src / Tgt Layer (Mean of {len(all_dfs)} files)")
+plt.title(f"SST2 56 Tokens - ROUGE1 Smoothness by Src / Tgt Layer (Mean of {len(all_dfs)} 10 inference runs)")
 plt.xlabel("Src Layer")
 plt.ylabel("Tgt Layer")
 plt.tight_layout()
