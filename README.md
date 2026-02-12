@@ -23,12 +23,12 @@ python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct
 
 ### Calculate Scores on the elicited descriptions of the Soft Prompts
 ```
-python -m scripts.calculate_scores -i cot_patching_output/Meta-Llama-3-8B-Instruct/stanfordnlp/sst2/n56_target_description_and_classes_1 -o cot_scores/Meta-Llama-3-8B-Instruct/stanfordnlp/sst2/n56_target_description_and_classes_1 -t sst2
+python -m scripts.calculate_scores -i cot_patching_output/Meta-Llama-3-8B-Instruct/SetFit/subj/n28_target_description_and_classes_1 -o cot_scores/Meta-Llama-3-8B-Instruct/SetFit/subj/n28_target_description_and_classes_1 -t subj
 ```
 
-### Generate Smoothness Curve using the Scored outputs
+### Visualize ROUGE1 Smoothness
 ```
-python -m scripts.visualize_src_tgt_smoothness_curve -f scores/Meta-Llama-3-8B-Instruct/fancyzhx/ag_news/n56_target_description_and_classes_1/epoch_0006_acc_0.947000.csv
+python -m scripts.visualize_interpretability_smoothness
 ```
 
 ## Citation
