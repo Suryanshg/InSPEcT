@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Prompt Tuning
 # -----------------------------
-python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d "CogComp/trec" -t text -l label_text -n 56 -lr 8e-4 -e 20 -es test -o trained_prompts -mt 50000
+python -m scripts.train_prompt -m meta-llama/Meta-Llama-3-8B-Instruct -d "SetFit/TREC-QC" -t text -l label_text -n 56 -lr 8e-4 -e 20 -es test -o trained_prompts -mt 50000

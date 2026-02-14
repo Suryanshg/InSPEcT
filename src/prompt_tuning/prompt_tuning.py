@@ -88,19 +88,29 @@ def load_dataset_with_name(dataset_name, create_text_labels, eval_split, max_tra
         if dataset_name == "CogComp/trec":
             classes = ["abbreviation", "entity", "description", "human", "location", "number"]
             label_column = "coarse_label"
+
         elif dataset_name == "fancyzhx/ag_news":
             classes = [k.replace("_", " ") for k in dataset["train"].features["label"].names]
             classes[3] = "Technology"
+
         elif dataset_name == "tasksource/subjectivity":
             classes = {"SUBJ":"subjective", "OBJ":"objective"}
             label_column = "Label"
+            
         elif dataset_name == "SetFit/sst5":
             classes = ["terrible", "bad", "neutral", "good", "great"]
+
         elif dataset_name == "stanfordnlp/sst2":
             classes = ["negative", "positive"]
+
         elif dataset_name == "SetFit/subj":
             label_column = "label_text"
             classes = ["objective", "subjective"]
+
+        elif dataset_name == "SetFit/TREC-QC":
+            classes = ["description", "entity", "abbreviation", "human", "number", "location"]
+            label_column = "label_coarse"
+            
         else:
             classes = [k.replace("_", " ") for k in dataset["train"].features["label"].names]
         
