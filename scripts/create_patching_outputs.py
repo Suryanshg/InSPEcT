@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
         # Fetch a random example from the test dataset
         # TODO: Can add seed to shuffle() later for reproducibility
-        random_test_example = load_dataset(task_dataset, trust_remote_code=True, split='test').shuffle()[0]['text']
+        random_test_example = load_dataset(task_dataset, trust_remote_code=True, split='test').shuffle()[0]['sentence']
 
         # Generate chain-of-thought styled target prompt using random_test_example
         target_prompts = {f"target_{target_name}_{target_prompt_index}": create_cot_prompt(num_tokens, random_test_example) for i in range(1)}

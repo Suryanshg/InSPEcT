@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Patch Scopes Experiment
 # -----------------------------
-python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/subj -n 56 -c to_patch_subj_56tokens -t description_and_classes -i 1 -max 1000 -o cot_patching_output
+python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -n 56 -c to_patch -t description_and_classes -i 1 -max 1000 -o temp

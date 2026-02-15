@@ -28,12 +28,18 @@ only_embed = [
     {"min_source": -1, "max_source": -1, "min_target": -1, "max_target": -1}
 ]
 
+confidence_layers = [
+    {"min_source": -1, "max_source": -1, "min_target": -1, "max_target": -1},
+    {"min_source": 7, "max_source": 7, "min_target": 17, "max_target": 17}
+]
+
 def get_layers_combinations_for_model(model_path):
     # TODO: Add Llama-3.1-8B here for experiment's with Mac's paper
     if model_path in ["meta-llama/Llama-2-7b-chat-hf", 
                       "meta-llama/Meta-Llama-3-8B-Instruct"]:
         # return llama_best_scored_layers
-        return all_layers
+        # return all_layers
         # return only_embed
+        return confidence_layers
     
     return all_small_layers
