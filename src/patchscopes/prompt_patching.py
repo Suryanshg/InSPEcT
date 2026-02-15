@@ -1,5 +1,7 @@
 import torch
 from src.constants import DEVICE
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def set_hs_patch_hooks(model, hs_patch_config, num_of_tokens):
@@ -131,27 +133,35 @@ def generate_greedy_deterministic(hs_patch_config,
                                   end_token, 
                                   model, 
                                   tokenizer, 
-                                  num_of_tokens, 
+                                  num_of_tokens,
+                                  source_layer, 
                                   target_layer,
                                   do_sample = False,
                                   temperature = 1.0,
-                                  top_p = 0.9,
-                                  top_k = 50):
+                                  visualize_confidence = False):
     
     # Copy target prompt's input token ids for generation (IDK why again)
     input_ids = inp["input_ids"].detach().clone().to(DEVICE)
 
-    # TODO: Try this to see if it works
+    # Without this, we mostly get warnings
     # model.set_attn_implementation('eager')
 
+    # Track data for visualization
+    viz_data = []
+
     with torch.no_grad():
-        for _ in range(max_length):
+        for step in range(max_length):
             patch_hooks = set_hs_patch_hooks(model, hs_patch_config, num_of_tokens) 
             outputs = model(input_ids, output_attentions=True, output_hidden_states=True)
             remove_hooks(patch_hooks)
             
             # Extract logits for the last token
-            logits = outputs.logits[:, -1, :]
+            # output.logits has shape                       # (1, seq_len, vocab_size)
+            logits = outputs.logits[:, -1, :]               # (1, vocab_size)
+
+            # Compute probablilities (before temp scaling)
+            # Apply softmax to the last dim (which is vocab dim)
+            raw_probs = torch.softmax(logits, dim = -1)     # (1, vocab_size)
 
             # Get the next token id using the logits
             if do_sample:
@@ -160,10 +170,30 @@ def generate_greedy_deterministic(hs_patch_config,
 
                 # Sample from the softmax distribution
                 probs = torch.softmax(logits, dim = -1)
-                next_token_id = torch.multinomial(probs, num_samples=1).squeeze(1)
+                next_token_id = torch.multinomial(probs, num_samples=1).squeeze(1) # (1,)
 
             else:
-                next_token_id = torch.argmax(logits, dim=-1)
+                next_token_id = torch.argmax(logits, dim=-1)                       # (1, )
+
+            # Collect data for visualizing confidence
+            if visualize_confidence:
+                # Decode the next token id
+                chosen_token = tokenizer.decode([next_token_id.item()])
+                
+                # Get probability of the chosen token
+                # Choose the first batch (0 idx) and the token's prob using the token's id as the idx
+                chosen_prob = raw_probs[0, next_token_id.item()].item()
+
+                viz_data.append({
+                    "step": step,
+                    "chosen_token": chosen_token,
+                    "chosen_prob": chosen_prob,
+
+                    # Compute Entropy
+                    # H = -Σ p(token) * log(p(token))
+                    "entropy": -(raw_probs * torch.log(raw_probs + 1e-10)).sum(dim = -1).item()
+                })
+
 
             # Concat the next token id to the input_ids for autoregressive generation
             input_ids = torch.cat([input_ids, next_token_id.unsqueeze(0)], dim=-1)
@@ -172,9 +202,46 @@ def generate_greedy_deterministic(hs_patch_config,
             if next_token_id.item() == end_token:
                 break
 
+    # Generate Confidence Visualization if needed
+    if visualize_confidence and viz_data:
+        generate_confidence_visualizations(viz_data, source_layer, target_layer)
+
     generated_text = tokenizer.batch_decode(input_ids, skip_special_tokens=True)
     patched_pattern = (" x" * num_of_tokens).strip()
     return "".join(generated_text).split(patched_pattern)[-1] 
+
+
+def generate_confidence_visualizations(viz_data, source_layer, target_layer):
+
+    # Create two subplots
+    fig, axes = plt.subplots(2, 1, figsize=(14, 8))
+
+    # Extract individual components from viz_data
+    steps = [s["step"] for s in viz_data]
+    chosen_probs = [s["chosen_prob"] for s in viz_data]
+    chosen_tokens = [repr(s["chosen_token"]) for s in viz_data]
+    entropies = [s["entropy"] for s in viz_data]
+
+    # --- Plot 1: Chosen token probability per step ---
+    bars = axes[0].bar(steps, chosen_probs, color=plt.cm.RdYlGn(chosen_probs), edgecolor='black', linewidth=0.5)
+    axes[0].set_ylabel("Prob(chosen token)")
+    axes[0].set_title("Confidence of Chosen Token at Each Step")
+    axes[0].set_ylim(0, 1.05)
+    for i, (bar, token) in enumerate(zip(bars, chosen_tokens)):
+        axes[0].text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
+                     token, ha='center', va='bottom', fontsize=7, rotation=45)
+    
+    # --- Plot 2: Entropy per step ---
+    axes[1].plot(steps, entropies, marker='o', color='purple', linewidth=2)
+    axes[1].fill_between(steps, entropies, alpha=0.2, color='purple')
+    axes[1].set_xlabel("Generation Step")
+    axes[1].set_ylabel("Entropy")
+    axes[1].set_title("Prediction Entropy per Step (lower = more confident)")
+    
+    plt.tight_layout()
+    plt.savefig(f"viz/generation_confidence_src_{source_layer}_tgt_{target_layer}.png", dpi=150, bbox_inches='tight')
+    plt.show()
+    print("Saved visualization to generation_confidence.png")
 
 
 def run_patchscopes_with_params(model, tokenizer, soft_prompt, target_prompt, num_tokens,
