@@ -222,24 +222,25 @@ def generate_confidence_visualizations(viz_data, source_layer, target_layer):
     chosen_tokens = [repr(s["chosen_token"]) for s in viz_data]
     entropies = [s["entropy"] for s in viz_data]
 
-    # --- Plot 1: Chosen token probability per step ---
-    bars = axes[0].bar(steps, chosen_probs, color=plt.cm.RdYlGn(chosen_probs), edgecolor='black', linewidth=0.5)
+    # Plot Chosen next token probability per step
+    # bars = axes[0].bar(steps, chosen_probs, color=plt.cm.RdYlGn(chosen_probs), edgecolor='black', linewidth=0.5)
+    bars = axes[0].bar(steps, chosen_probs, color = 'blue', edgecolor='black', linewidth=0.5)
     axes[0].set_ylabel("Prob(chosen token)")
-    axes[0].set_title("Confidence of Chosen Token at Each Step")
+    axes[0].set_title("Confidence of Chosen Next Token at Each Step")
     axes[0].set_ylim(0, 1.05)
     for i, (bar, token) in enumerate(zip(bars, chosen_tokens)):
         axes[0].text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
-                     token, ha='center', va='bottom', fontsize=7, rotation=45)
+                     token, ha='center', va='bottom', fontsize=7, rotation=90)
     
-    # --- Plot 2: Entropy per step ---
+    # Plot Entropy per step
     axes[1].plot(steps, entropies, marker='o', color='purple', linewidth=2)
     axes[1].fill_between(steps, entropies, alpha=0.2, color='purple')
     axes[1].set_xlabel("Generation Step")
     axes[1].set_ylabel("Entropy")
-    axes[1].set_title("Prediction Entropy per Step (lower = more confident)")
+    axes[1].set_title("Prediction Entropy per Step")
     
     plt.tight_layout()
-    plt.savefig(f"viz/generation_confidence_src_{source_layer}_tgt_{target_layer}.png", dpi=150, bbox_inches='tight')
+    plt.savefig(f"viz/confidence_curves/generation_confidence_src_{source_layer}_tgt_{target_layer}.png", dpi=150, bbox_inches='tight')
     plt.show()
     print("Saved visualization to generation_confidence.png")
 
