@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Patch Scopes Experiment
 # -----------------------------
-python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d fancyzhx/ag_news -n 56 -c to_patch -t description_and_classes -i 1 -max 8
+python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -n 56 -c to_patch_sst2_56tokens -t description_and_classes -i 1 -max 1000
