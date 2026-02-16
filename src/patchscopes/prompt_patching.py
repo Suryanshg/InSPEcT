@@ -213,7 +213,7 @@ def generate_greedy_deterministic(hs_patch_config,
 
 def generate_confidence_visualizations(viz_data, source_layer, target_layer):
 
-    # Create two subplots
+    # Create two subplots in two rows
     fig, axes = plt.subplots(2, 1, figsize=(14, 8))
 
     # Extract individual components from viz_data
@@ -230,7 +230,7 @@ def generate_confidence_visualizations(viz_data, source_layer, target_layer):
     axes[0].set_ylim(0, 1.05)
     for i, (bar, token) in enumerate(zip(bars, chosen_tokens)):
         axes[0].text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
-                     token, ha='center', va='bottom', fontsize=7, rotation=90)
+                     token, ha='center', va='bottom', fontsize=10, rotation=90)
     
     # Plot Entropy per step
     axes[1].plot(steps, entropies, marker='o', color='purple', linewidth=2)
@@ -239,7 +239,7 @@ def generate_confidence_visualizations(viz_data, source_layer, target_layer):
     axes[1].set_ylabel("Entropy")
     axes[1].set_title("Prediction Entropy per Step")
     
-    plt.tight_layout()
+    # plt.tight_layout()
     plt.savefig(f"viz/confidence_curves/generation_confidence_src_{source_layer}_tgt_{target_layer}.png", dpi=150, bbox_inches='tight')
     plt.show()
     print("Saved visualization to generation_confidence.png")
