@@ -239,7 +239,7 @@ def generate_confidence_visualizations(viz_data, source_layer, target_layer):
     axes[1].set_ylabel("Entropy")
     axes[1].set_title("Prediction Entropy per Step")
     
-    # plt.tight_layout()
+    plt.tight_layout()
     plt.savefig(f"viz/confidence_curves/generation_confidence_src_{source_layer}_tgt_{target_layer}.png", dpi=150, bbox_inches='tight')
     plt.show()
     print("Saved visualization to generation_confidence.png")
