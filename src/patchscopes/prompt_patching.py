@@ -142,7 +142,7 @@ def generate_greedy_deterministic(hs_patch_config,
     input_ids = inp["input_ids"].detach().clone().to(DEVICE)
 
     # TODO: Try this to see if it works
-    # model.set_attn_implementation('eager')
+    model.set_attn_implementation('eager')
 
     with torch.no_grad():
         for _ in range(max_length):

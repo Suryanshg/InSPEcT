@@ -2,13 +2,13 @@
 #SBATCH -N 1
 #SBATCH -n 8
 #SBATCH --mem=16g
-#SBATCH -J "Patch Soft Prompts"
+#SBATCH -J "TREC"
 #SBATCH -p short
 #SBATCH -t 12:00:00
 #SBATCH --gres=gpu:1
 #SBATCH -C A100
-#SBATCH -o logs.out
-#SBATCH -e logs.out
+#SBATCH -o logs_trec.out
+#SBATCH -e logs_trec.out
 
 # -----------------------------
 # Load Required Modules
@@ -34,4 +34,4 @@ fi
 # -----------------------------
 # Run Patch Scopes Experiment
 # -----------------------------
-python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d stanfordnlp/sst2 -n 56 -c to_patch_sst2_56tokens -t description_and_classes -i 1 -max 1000
+python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct -d SetFit/TREC-QC -n 56 -c to_patch_trec_56tokens -t description_and_classes -i 1 -max 1000
