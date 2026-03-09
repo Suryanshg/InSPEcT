@@ -23,7 +23,7 @@ python -m scripts.create_patching_outputs -m meta-llama/Meta-Llama-3-8B-Instruct
 
 ### Calculate Scores on the elicited descriptions of the Soft Prompts
 ```
-python -m scripts.calculate_scores -i patching_output/Meta-Llama-3-8B-Instruct/SetFit/sst5/n56_target_description_and_classes_1 -o scores/Meta-Llama-3-8B-Instruct/SetFit/sst5/n56_target_description_and_classes_1 -t sst5
+python -m scripts.calculate_scores -i patching_output/Meta-Llama-3-8B-Instruct/SetFit/TREC-QC/n56_target_description_and_classes_1 -o scores/Meta-Llama-3-8B-Instruct/SetFit/TREC-QC/n56_target_description_and_classes_1 -t trec
 ```
 
 ### Generate Smoothness Curve using the Scored outputs
